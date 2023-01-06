@@ -66,7 +66,7 @@ if __name__ == "__main__":
     if use_turtle:
         turtle.setworldcoordinates(-50, -200, 200, 50)
 
-    with open("res/T01_No_Time_for_a_Taxicab.txt") as file:
+    with open("puzzles/T01_No_Time_for_a_Taxicab.txt") as file:
         commands = file.readline().split(", ")
     current_position = [0, 0]
 
