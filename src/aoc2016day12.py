@@ -1,42 +1,59 @@
-import io
+""" Day 12: Leonardo's Monorail """
 
 
-comands = ("cpy", "inc", "dec", "jnz")
-
-class Operand:
+class Op:
+    """ class models 2nd and 3d operands of operator """
     name_ = ""
-    register_ = False
+    is_reg_ = False
     value_ = None
+
     def __init__(self, name) -> None:
         if name in ('a', 'b', 'c', 'd'):
             self.name_ = name
-            self.register_ = True
+            self.is_reg_ = True
         elif name.lstrip('-').isdigit():
             self.name_ = name
-            self.register_ = False
+            self.is_reg_ = False
             self.value_ = int(name)
-    # def __str__(self) -> str:
-    #     return self.name_
-    def __repr__(self) -> str:
-        return f"op({self.name_})"
 
+    def __repr__(self) -> str:
+        return f"Op('{self.name_}')"
+
+
+class InvalidCommand(Exception):
+    """ Exception class for invalid arguments"""
 
 
 class Computer:
+    ''' cladd modeling computer '''
     a_ = 0
     b_ = 0
     c_ = 0
     d_ = 0
     pos_ = 0
-    prog_ = []    
+    prog_ = []
 
-    def __init__(self, program):
+    # def __init__(self, program):
+    #     self.prog_ = program
+
+    def __init__(self, program, a=0, b=0, c=0, d=0, pos=0):
         self.prog_ = program
+        self.a_ = a
+        self.b_ = b
+        self.c_ = c
+        self.d_ = d
+        self.pos_ = pos
+
+    def __str__(self) -> str:
+        return "{a = %6d, b = %6d, c = %6d, d = %6d, pos = %6d}" % \
+            (self.a_, self.b_, self.c_, self.d_, self.pos_)
 
     def __repr__(self) -> str:
-        return "{a = %6d, b = %6d, c = %6d, d = %6d, pos = %6d}" % (self.a_,self.b_,self.c_,self.d_, self.pos_ )
+        return "{a = %d, b = %d, c = %d, d = %d, pos = %d}" % \
+            (self.a_, self.b_, self.c_, self.d_, self.pos_)
 
     def set_reg(self, name, value):
+        """ set value of register by name """
         match name:
             case "a":
                 self.a_ = value
@@ -48,6 +65,7 @@ class Computer:
                 self.d_ = value
 
     def get_reg(self, name):
+        """ get value of register by name """
         match name:
             case "a":
                 return self.a_
@@ -59,95 +77,91 @@ class Computer:
                 return self.d_
 
     def execute_command(self):
+        """ execute one command under the position pos_"""
         if self.pos_ >= len(self.prog_):
             raise StopIteration("Program halted")
         command = self.prog_[self.pos_]
         match command[0]:
             case "cpy":
-                if command[1].register_:
+                if command[1].is_reg_:
                     value = self.get_reg(command[1].name_)
                 else:
                     value = command[1].value_
-                if command[2].register_:
+                if command[2].is_reg_:
                     self.set_reg(command[2].name_, value)
                     self.pos_ += 1
                 else:
-                    raise Exception("second argument on command cpy isn't a register")
-                    
+                    raise InvalidCommand(
+                        "second argument on command cpy isn't a register")
+
             case "inc":
-                if command[1].register_ :
-                    self.set_reg(command[1].name_, self.get_reg(command[1].name_)+1)
+                if command[1].is_reg_:
+                    self.set_reg(command[1].name_,
+                                 self.get_reg(command[1].name_)+1)
                     self.pos_ += 1
                 else:
-                    raise Exception("argument of command inc isn't a register")
+                    raise InvalidCommand(
+                        "argument of command inc isn't a register")
 
             case "dec":
-                if command[1].register_ :
-                    self.set_reg(command[1].name_, self.get_reg(command[1].name_)-1)
+                if command[1].is_reg_:
+                    self.set_reg(command[1].name_,
+                                 self.get_reg(command[1].name_)-1)
                     self.pos_ += 1
                 else:
-                    raise Exception("argument of command dec isn't a register")
+                    raise InvalidCommand(
+                        "argument of command dec isn't a register")
 
             case "jnz":
-                if command[1].register_:
+                if command[1].is_reg_:
                     value = self.get_reg(command[1].name_)
                 else:
                     value = command[1].value_
-                    # raise Exception("first argument of command jnz is not a register")
 
                 if value != 0:
-                    if not command[2].register_:
+                    if not command[2].is_reg_:
                         self.pos_ += command[2].value_
                     else:
-                        raise Exception("second argument of command jnz is a register")
+                        raise InvalidCommand(
+                            "second argument of command jnz is a register")
                 else:
                     self.pos_ += 1
 
     def execute_program(self):
+        """ execute the whole program """
         while 0 <= self.pos_ < len(self.prog_):
             # print("%-20s" % self.prog_[self.pos_], end="\t")
             self.execute_command()
-            # print(self)
 
 
 def read_program(file):
+    """ read programm from file """
     program = []
     for line in file:
         if line:
             parts = line.split()
             command = [parts[0]]
             for i in parts[1:]:
-                command.append(Operand(i))
+                command.append(Op(i))
             program.append(command)
-            # print(command)
     return program
-        
 
 
 def main():
+    """ the main program """
 
-    test_str = r"""cpy 41 a
-inc a
-inc a
-dec a
-jnz a 2
-dec a
-"""
-
-    # with io.StringIO(test_str) as file:
-    with open("puzzles/T12_Leonardo's Monorail.txt") as file:
+    with open("puzzles/aoc2016_day12_data.txt", encoding="utf-8") as file:
         program = read_program(file)
-    # print(program)
+
     comp = Computer(program)
     comp.execute_program()
-    # print(comp)
     print(f"The value that is left in register a is {comp.a_}")
 
-    comp2 = Computer(program)
-    comp2.c_ = 1
+    comp2 = Computer(program, c=1)
     comp2.execute_program()
-    # print(comp2)
-    print(f"The value that is left in register a initializeng c with 1 is {comp2.a_}")
+    print(
+        f"The value that is left in reg a initializeng c with 1 is {comp2.a_}")
+
 
 if __name__ == "__main__":
     main()
