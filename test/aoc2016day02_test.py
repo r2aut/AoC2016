@@ -1,11 +1,11 @@
-import sys
-sys.path.append("src")
+""" Day 2: Bathroom Security unit tests """
 
 import io
 
-from T02_Bathroom_Security import get_digits
+from src.aoc2016day02 import get_digits
 
 def test_get_digits():
+    """ get_gigits function unit test """
 
     test_keypad = ( ('1','2','3','0'),
                     ('4','5','6','0'),
@@ -18,4 +18,3 @@ def test_get_digits():
     with io.StringIO(test_str) as file:
         gen = get_digits(test_keypad, (1,1), file)
         assert "".join((gen)) == "1985"
- 
