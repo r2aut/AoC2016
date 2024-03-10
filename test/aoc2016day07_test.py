@@ -1,10 +1,7 @@
-import sys
-sys.path.append("src")
+""" Day 7: Internet Protocol Version 7 unit tests """
 
-import io
-
-from T07_Internet_Protocol_Version_7 import scanLineForTLS
-from T07_Internet_Protocol_Version_7 import scanLineForSSL
+from src.aoc2016day07 import scan_line_for_tls
+from src.aoc2016day07 import scan_line_for_ssl
 
 test_str_TLS = list()
 test_str_TLS.append("abba[mnop]qrst")
@@ -13,10 +10,11 @@ test_str_TLS.append("aaaa[qwer]tyui")
 test_str_TLS.append("ioxxoj[asdfgh]zxcvbn")
 
 
-def test_scanLineForTLS():
+def test_scan_line_for_tls():
+    """ scan_line_for_tls unit test """
     counter = 0
     for line in test_str_TLS:
-        if scanLineForTLS(line):
+        if scan_line_for_tls(line):
             counter += 1
     assert counter == 2
 
@@ -26,9 +24,10 @@ xyx[xyx]xyx
 aaa[kek]eke
 zazbz[bzb]cdb""".split("\n")
 
-def test_scanLineForSSL():
+def test_scan_line_for_ssl():
+    """ scan_line_for_ssl unit test """
     counter = 0
     for line in test_str_SSL:
-        if scanLineForSSL(line):
+        if scan_line_for_ssl(line):
             counter += 1
     assert counter == 3
