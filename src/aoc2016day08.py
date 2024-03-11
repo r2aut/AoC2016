@@ -1,11 +1,14 @@
+""" Day 8: Two-Factor Authentication """
+
 import io
 
 
 class Screen:
+    """ class Screen """
     __rows = list()
 
     def __init__(self, width, hight):
-        for i in range(hight):
+        for _ in range(hight):
             row = [False]*width
             self.__rows.append(row)
 
@@ -13,16 +16,18 @@ class Screen:
         strio = io.StringIO()
         for row in self.__rows:
             for col in row:
-                print("#" if col else ".", end='', sep = '', file=strio)
+                print("#" if col else ".", end='', sep='', file=strio)
             print(file=strio)
         return strio.getvalue()
 
     def rect(self, width, hight):
+        """ rect method """
         for row in range(hight):
-            for col in range (width):
+            for col in range(width):
                 self.__rows[row][col] = True
 
     def rotate_row(self, row_num, shifts):
+        """ rotate_row method """
         width = len(self.__rows[0])
         new_row = [False] * width
         for num, col in enumerate(self.__rows[row_num]):
@@ -32,8 +37,9 @@ class Screen:
         self.__rows[row_num] = new_row
 
     def rotate_column(self, column_num, shifts):
+        """ rotate_column method """
         hight = len(self.__rows)
-        new_column = [False]* hight
+        new_column = [False] * hight
         for row in range(len(self.__rows)):
             if self.__rows[row][column_num]:
                 new_row = (row + shifts) % hight
@@ -42,6 +48,7 @@ class Screen:
             self.__rows[row][column_num] = new_column[row]
 
     def lit_pixels(self):
+        """ lit_pixels method """
         counter = 0
         for row in self.__rows:
             for col in row:
@@ -51,6 +58,7 @@ class Screen:
 
 
 class ScreenProcessor:
+    """ class ScreenProcessor """
     __screen = None
     __file = None
 
@@ -58,40 +66,38 @@ class ScreenProcessor:
         self.__screen = screen
         self.__file = file
 
-    def process_command(self):  
+    def process_command(self):
+        """ process_command method """
         line = self.__file.readline()
         if len(line) == 0:
             return False
         line_parts = line.split()
-        if line_parts[0]=='rect':
+        if line_parts[0] == 'rect':
             args = line_parts[1].split('x')
             self.__screen.rect(int(args[0]), int(args[1]))
-        elif line_parts[0]=="rotate" and line_parts[1] == "row":
+        elif line_parts[0] == "rotate" and line_parts[1] == "row":
             args = line_parts[2].split('=')
             self.__screen.rotate_row(int(args[1]), int(line_parts[4]))
-        elif line_parts[0]=="rotate" and line_parts[1] == "column":
+        elif line_parts[0] == "rotate" and line_parts[1] == "column":
             args = line_parts[2].split('=')
             self.__screen.rotate_column(int(args[1]), int(line_parts[4]))
         return True
-    
 
 
-        
+def main():
+    """ main function """
 
+    width = 50
+    hight = 6
 
-if __name__ == "__main__":
-
-    WIDTH = 50
-    HIGHT = 6
-
-    with open("puzzles/T08_Two-Factor_Authentication.txt") as file:
-        screen = Screen(WIDTH, HIGHT)
+    with open("puzzles/aoc2016day08_data.txt", encoding="utf-8") as file:
+        screen = Screen(width, hight)
         print(screen)
         sp = ScreenProcessor(screen, file)
-        while sp.process_command() :
+        while sp.process_command():
             print(screen)
         print(screen.lit_pixels(), "pixels should be lit")
 
 
-
-
+if __name__ == "__main__":
+    main()
