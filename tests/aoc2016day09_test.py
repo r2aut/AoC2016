@@ -3,7 +3,7 @@ sys.path.append("src")
 
 import io
 
-from T09_Explosives_in_Cyberspace import decompress
+from aoc2016day09 import decompress
 
 def test_decompress():
 
