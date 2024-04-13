@@ -32,8 +32,7 @@ def main():
     with open("puzzles/aoc2016day09_data.txt", encoding="utf-8") as file:
         text = file.readline().rstrip()
         print(f"Decompressed length of the file is {get_dec_length(text)}")
-        print(f"Fully decompressed length of the file is {
-              get_dec_length(text, True)}")
+        print(f"Fully decompressed length of the file is { get_dec_length(text, True)}")
 
 
 if __name__ == "__main__":

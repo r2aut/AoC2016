@@ -150,7 +150,7 @@ def read_program(file):
 def main():
     """ the main program """
 
-    with open("puzzles/aoc2016_day12_data.txt", encoding="utf-8") as file:
+    with open("puzzles/aoc2016day12_data.txt", encoding="utf-8") as file:
         program = read_program(file)
 
     comp = Computer(program)
