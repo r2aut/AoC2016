@@ -45,11 +45,11 @@ def count_valid_triangles_variant_2(file):
 
 def main():
     """ main function """
-    with open(r"puzzles\aoc2016day03_data.txt", encoding="utf-8") as file:
+    with open(r"puzzles/aoc2016day03_data.txt", encoding="utf-8") as file:
         print(
             f"It is possible {count_valid_triangles_variant_1(file)} triangles using variant 1.")
 
-    with open(r"puzzles\aoc2016day03_data.txt", encoding="utf-8") as file:
+    with open(r"puzzles/aoc2016day03_data.txt", encoding="utf-8") as file:
         print(
             f"It is possible {count_valid_triangles_variant_2(file)} triangles using variant 2.")
 
