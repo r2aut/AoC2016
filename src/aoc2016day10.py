@@ -3,13 +3,6 @@
 import io
 from multiprocessing import Value
 
-TEST_DATA = """value 5 goes to bot 2
-bot 2 gives low to bot 1 and high to bot 0
-value 3 goes to bot 1
-bot 1 gives low to output 1 and high to bot 0
-bot 0 gives low to output 2 and high to output 0
-value 2 goes to bot 2
-"""
 
 class Chip:
     value = 0
@@ -19,9 +12,6 @@ class Chip:
         return str(self.value)
     def __lt__(self, obj):
         return self.value < obj.value
-    # def __int__(self):
-    #     return self.value
-
 
 
 class OutputBin:
@@ -47,7 +37,6 @@ class Bot:
     def __init__(self, number) -> None:
         self.number = number
         self.chips = list()
-        # self.chips.clear()
     def pop_low_chip(self) -> Chip:
         return self.chips.pop(0)
     def pop_high_chip(self) -> Chip:
@@ -59,20 +48,12 @@ class Bot:
         self.chips.append(chip)
         self.chips.sort()
     def __repr__(self) -> str:
-        # return str(self.number)+':'+str(bin)
         return str(self.number)+':'+str(self.chips)
     def __contains__(self, item):
         for i in self.chips:
             if i.value == item.value:
                 return True
         return False
-    # def contain_all_chips(self, *args):
-    #     res = True
-    #     for i in args:
-    #         if i not in self:
-    #             res = False
-    #             break
-    #     return res
     def compare_chips(self, a, b):
         if a > b:
             a, b = b, a
@@ -81,8 +62,6 @@ class Bot:
         if self.chips[0].value == a and self.chips[-1].value == b:
             return True
         return False
-
-
 
 class Bots:
     bots = dict()
@@ -109,19 +88,20 @@ class OutputBins:
         return "Output bins " + str(self.bins.values())
 
 
-def process(program_file):
+def process(program_file, compared_chips, cycle_quantity = 50):
     output_bins = OutputBins()
     bots = Bots()
+
+    comp_results = None
     
     lines = program_file.readlines()
 
 
-    i = 200
-    while i:
+    cycle_number = cycle_quantity
+    while cycle_number:
 
         for line in lines:
             parts = line.strip().split()
-            # print(parts)
 
             assert parts[0]=="value" or parts[0]=="bot", "Bad value in bot's instruction"
             if parts[0] == "value":
@@ -150,36 +130,21 @@ def process(program_file):
                     dest_bin_num = int(parts[11])
                     output_bins[dest_bin_num].push(bots[bot_num].pop_high_chip())
             
-            # print(bots)
-            # print(output_bins)
             for b in bots.bots.values():
-                if b.compare_chips(17, 61):
-                # if b.compare_chips(2, 5):
-                    # print(output_bins.bins[0])
-                    # print(output_bins.bins[1])
-                    # print(output_bins.bins[2])
+                if b.compare_chips(compared_chips[0], compared_chips[1]):
+                    comp_results = b
 
-                    # return b.number
-                    ...
+        cycle_number -= 1
 
-        i -= 1
-        # print(i)
-        # print(output_bins)
+    return comp_results.number, output_bins.bins[0].bin.pop().value*output_bins.bins[1].bin.pop().value*output_bins.bins[2].bin.pop().value
 
-    # print(output_bins.bins.keys())
-
-    print(output_bins.bins[0].bin.pop().value*output_bins.bins[1].bin.pop().value*output_bins.bins[2].bin.pop().value)
-    # print(output_bins.bins[1])
-    # print(output_bins.bins[2])
-
-    return None
 
 def main():
 
     with open("puzzles/aoc2016day10_data.txt", encoding="utf-8") as file:
-
-    # with io.StringIO(TEST_DATA) as file:
-        print(process(file))
+        bot, mult = process(file, (17,61), 100)
+        print(f"The number of the bot is {bot}")
+        print(f"The multiplication of values is {mult}")
     
 
 if __name__ == "__main__":
