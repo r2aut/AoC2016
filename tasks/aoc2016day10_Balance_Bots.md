@@ -37,3 +37,5 @@ The first half of this puzzle is complete! It provides one gold star: *
 ## Part Two
 
 What do you get if you multiply together the values of one chip in each of outputs 0, 1, and 2?
+
+Your puzzle answer was 12803.

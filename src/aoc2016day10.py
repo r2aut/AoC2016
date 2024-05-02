@@ -106,7 +106,7 @@ class OutputBins:
             self.bins[index] = bin
             return bin
     def __repr__(self) -> str:
-        return str(self.bins.values())
+        return "Output bins " + str(self.bins.values())
 
 
 def process(program_file):
@@ -116,7 +116,7 @@ def process(program_file):
     lines = program_file.readlines()
 
 
-    i = 100
+    i = 200
     while i:
 
         for line in lines:
@@ -151,15 +151,27 @@ def process(program_file):
                     output_bins[dest_bin_num].push(bots[bot_num].pop_high_chip())
             
             # print(bots)
+            # print(output_bins)
             for b in bots.bots.values():
                 if b.compare_chips(17, 61):
                 # if b.compare_chips(2, 5):
-                    return b.number
+                    # print(output_bins.bins[0])
+                    # print(output_bins.bins[1])
+                    # print(output_bins.bins[2])
+
+                    # return b.number
                     ...
 
         i -= 1
         # print(i)
-        print(output_bins)
+        # print(output_bins)
+
+    # print(output_bins.bins.keys())
+
+    print(output_bins.bins[0].bin.pop().value*output_bins.bins[1].bin.pop().value*output_bins.bins[2].bin.pop().value)
+    # print(output_bins.bins[1])
+    # print(output_bins.bins[2])
+
     return None
 
 def main():
