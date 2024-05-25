@@ -31,7 +31,7 @@ class Computer:
     c_ = 0
     d_ = 0
     pos_ = 0
-    prog_ = []
+    prog_: list = []
 
     # def __init__(self, program):
     #     self.prog_ = program
