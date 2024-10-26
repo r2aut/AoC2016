@@ -43,6 +43,16 @@ class LazyHasher:
         return res
 
 
+class StratchingHasher(LazyHasher):
+    def _calc_(self, index):
+        hstring = md5((self.solt_str + str(index)).encode("ascii"), usedforsecurity=False).digest().hex()
+        for _ in range(2016):
+            hstring = md5(hstring.encode("ascii"), usedforsecurity=False).digest().hex()
+        three_in_row = self._check_(hstring, 3)
+        five_in_row = self._check_(hstring, 5)
+        self.hashes[index] = (hstring, three_in_row, five_in_row)
+
+
 def calc_list(size: int, h: LazyHasher):
     counter = 0
     solt_num = 0
@@ -65,7 +75,8 @@ def calc_list(size: int, h: LazyHasher):
 
 def main():
 
-    h = LazyHasher("jlmsuwbz")
+    # h = LazyHasher("jlmsuwbz")
+    h = StratchingHasher("jlmsuwbz")
     l = calc_list(64, h)
 
     for i, item in enumerate(l):
