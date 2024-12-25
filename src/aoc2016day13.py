@@ -6,26 +6,17 @@ from typing import TypeAlias, Tuple
 FAVORITE_NUMBER = 10
 
 
-# class Point:
-#     def __init__(self, x, y) -> None:
-#         self.x = x
-#         self.y = y
-
-#     def __repr__(self) -> str:
-#         # return f"(x={self.x}, y={self.y})"
-#         return f"({self.x}, {self.y})"
-
-
 Point: TypeAlias = Tuple[int, int]
 
 
 class CellType(Enum):
+    """Cell type"""
+
     UNKNOWN = 0
     SPACE = 1
     WALL = 2
 
     def __str__(self) -> str:
-        # return super().__str__()
         res = ""
         match self.value:
             case 0:
@@ -38,6 +29,8 @@ class CellType(Enum):
 
 
 class Maze:
+    """Maze implementation"""
+
     def __init__(self, x_size, y_size, favorite_number) -> None:
         self.x_size = x_size
         self.y_size = y_size
@@ -47,7 +40,6 @@ class Maze:
         for y in range(self.y_size):
             row: list[CellType] = []
             for x in range(x_size):
-                # row.append(CellType.UNKNOWN)
                 row.append(self.calc_cell_type((x, y)))
             self.maze.append(row)
 
@@ -60,6 +52,7 @@ class Maze:
         return res
 
     def calc_cell_type(self, p: Point) -> CellType:
+        """Calculate the type of cell"""
         val = p[0] * p[0] + 3 * p[0] + 2 * p[0] * p[1] + p[1] + p[1] * p[1]
         val += self.favorite_number
         bits = bin(val).count("1")
@@ -75,6 +68,12 @@ class Graph:
     def __init__(self):
         self.graph = {}  # dict to store graph
 
+    def __repr__(self) -> str:
+        res = ""
+        for _, v in self.graph.items():
+            res += str(v)
+        return res
+
     def add_edge(self, u, v, w):
         """# function to add an edge to graph"""
         if u not in self.graph:
@@ -84,20 +83,16 @@ class Graph:
         self.graph[u][v] = w
 
     def get_vertices(self):
+        """Get list of nodes"""
         return self.graph.keys()
 
     def get_graph(self):
+        """Get graph reference"""
         return self.graph
 
-    def __repr__(self) -> str:
-        # return str(self.graph)
-        res = ""
-        for k in self.graph.keys():
-            res += str(self.graph[k])
-        return res
 
-
-def BellmanFord(graph, starting_vertice):
+def bellman_ford(graph, starting_vertice):
+    """Realisation of shortest path Bellman - Ford algorithm"""
 
     # Step 1: Initialize distances from src to all other vertices
     # as INFINITE
@@ -136,6 +131,7 @@ def BellmanFord(graph, starting_vertice):
 
 
 def make_graph(maze: Maze):
+    """Build grath according rules"""
     g = Graph()
     for r_num, row in enumerate(maze.maze[:-1:]):
         for c_num, cell in enumerate(row[:-1:]):
@@ -150,17 +146,15 @@ def make_graph(maze: Maze):
 
 
 def main():
+    """Main function"""
 
-    # maze = Maze(10, 10, 10)
     maze = Maze(60, 60, 1364)
     print(maze)
     g = make_graph(maze)
-    # print(g.graph[(3, 2)])
-    # print(g)
-    d = BellmanFord(g, (1, 1))
-    print(d[(31, 39)])
+    d = bellman_ford(g, (1, 1))
 
-    print(len({(k, v) for k, v in d.items() if v <= 50 and v > 0}))
+    print(f"The fewest number of steps required to reach 31,39 is {d[(31, 39)]}.")
+    print(f"{len({(k, v) for k, v in d.items() if v <= 50})} locations are possible to reach in at most 50 steps.")
 
 
 if __name__ == "__main__":
