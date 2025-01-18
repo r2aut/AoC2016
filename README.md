@@ -19,3 +19,4 @@ Tasks of the Advent of Code 2016:
 - Day 14: One-Time Pad
 - Day 15: Timing is Everything
 - Day 16: Dragon Checksum
+- Day 20: Firewall Rules
