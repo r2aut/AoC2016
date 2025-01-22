@@ -20,4 +20,5 @@ Tasks of the Advent of Code 2016:
 - Day 15: Timing is Everything
 - Day 16: Dragon Checksum
 - Day 17: Two Steps Forward
+- Day 18: Like a Rogue
 - Day 20: Firewall Rules
