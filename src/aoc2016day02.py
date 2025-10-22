@@ -1,7 +1,12 @@
-""" Day 2: Bathroom Security """
+"""Day 2: Bathroom Security."""
 
-from collections import namedtuple
-from io import TextIOWrapper
+from io import TextIOBase
+from pathlib import Path
+from typing import NamedTuple
+
+from rich.console import Console
+
+type KeyPad = tuple
 
 keypad1 = (("1", "2", "3"), ("4", "5", "6"), ("7", "8", "9"))
 
@@ -13,12 +18,16 @@ keypad2 = (
     ("0", "0", "D", "0", "0"),
 )
 
-Position = namedtuple("Position", "x y")  # (x, y), y increased down
+
+class Position(NamedTuple):  # (x, y), y increased down
+    """Position."""
+
+    x: int
+    y: int
 
 
-def get_digits(keypad, start_pos: Position, file: TextIOWrapper):
-    """Get_digits function"""
-
+def get_digits(keypad: KeyPad, start_pos: Position, file: TextIOBase) -> str:
+    """Get_digits function."""
     cur_pos = start_pos
     result = []
     for command_line in file:
@@ -32,7 +41,8 @@ def get_digits(keypad, start_pos: Position, file: TextIOWrapper):
                     next_pos = Position(cur_pos.x - 1, cur_pos.y)
                 case "U":
                     next_pos = Position(cur_pos.x, cur_pos.y - 1)
-
+                case _:
+                    raise ValueError
             if (
                 0 <= next_pos.y < len(keypad)
                 and 0 <= next_pos.x < len(keypad[next_pos.y])
@@ -43,15 +53,16 @@ def get_digits(keypad, start_pos: Position, file: TextIOWrapper):
     return "".join(result)
 
 
-def main():
-    """main function"""
-    with open("puzzles/aoc2016day02_data.txt", encoding="utf-8") as file:
-        dig1 = get_digits(keypad1, Position(1, 1), file)
-        print(f"The bathroom code for part 1 is {dig1}")
+def main():  # noqa: ANN201, D103
+    rc = Console()
 
-    with open("puzzles/aoc2016day02_data.txt", encoding="utf-8") as file:
+    with Path("puzzles/aoc2016day02_data.txt").open(encoding="utf-8") as file:
+        dig1 = get_digits(keypad1, Position(1, 1), file)
+        rc.print(f"[cyan](Part One)[/cyan] The bathroom code is [green]{dig1}[/green]")
+
+    with Path("puzzles/aoc2016day02_data.txt").open(encoding="utf-8") as file:
         dig2 = get_digits(keypad2, Position(1, 1), file)
-        print(f"The bathroom code for part 2 is {dig2}")
+        rc.print(f"[cyan](Part Two)[/cyan] The bathroom code is [green bold]{dig2}[/green bold]")
 
 
 if __name__ == "__main__":
