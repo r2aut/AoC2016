@@ -1,8 +1,12 @@
-""" Day 9: Explosives in Cyberspace """
+"""Day 9: Explosives in Cyberspace."""
+
+from pathlib import Path
+
+from rich.console import Console
 
 
-def get_dec_length(text, recursively=False):
-    """ decomoress function """
+def get_dec_length(text: str, /, recursively: bool = False) -> int:  # noqa: FBT001, FBT002
+    """Decomoress (only length, no text)."""
     it = 0
     length = 0
     while it < len(text):
@@ -10,14 +14,14 @@ def get_dec_length(text, recursively=False):
         it2 = text.find(")", it1)
 
         if it1 != -1:  # found
-            length += (it1 - it)
-            markers = text[it1+1:it2].split('x')
+            length += it1 - it
+            markers = text[it1 + 1 : it2].split("x")
             rapport_size = int(markers[0])
             rapport_number = int(markers[1])
-            it = it2+1  # skip ')'
-            rapport_text = text[it: it+rapport_size]
+            it = it2 + 1  # skip ')'
+            rapport_text = text[it : it + rapport_size]
             if recursively:
-                length += get_dec_length(rapport_text, True) * rapport_number
+                length += get_dec_length(rapport_text, recursively=True) * rapport_number
             else:
                 length += rapport_size * rapport_number
             it += rapport_size
@@ -27,12 +31,15 @@ def get_dec_length(text, recursively=False):
     return length
 
 
-def main():
-    """ main function """
-    with open("puzzles/aoc2016day09_data.txt", encoding="utf-8") as file:
+def main():  # noqa: ANN201, D103
+    with Path("puzzles/aoc2016day09_data.txt").open(encoding="utf-8") as file:
         text = file.readline().rstrip()
-        print(f"Decompressed length of the file is {get_dec_length(text)}")
-        print(f"Fully decompressed length of the file is { get_dec_length(text, True)}")
+        res_1 = get_dec_length(text)
+        res_2 = get_dec_length(text, recursively=True)
+
+        rc = Console()
+        rc.print(f"[cyan](Part One)[/cyan] Decompressed length of the file is [green]{res_1}[/green]")
+        rc.print(f"[cyan](Part Two)[/cyan] Fully decompressed length of the file is [green]{res_2}[/green]")
 
 
 if __name__ == "__main__":
