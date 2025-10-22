@@ -8,11 +8,11 @@ Or are they?
 
 The design document gives the side lengths of each triangle it describes, but... 5 10 25? Some of these aren't triangles. You can't help but mark the impossible ones.
 
-In a valid triangle, the sum of any two sides must be larger than the remaining side. For example, the "triangle" given above is impossible, because 5 + 10 is not larger than 25.
+In a valid triangle, the sum of any two sides must be larger than the remaining side. For example, the "triangle" given above is impossible, because `5 + 10` is not larger than `25`.
 
 In your puzzle input, how many of the listed triangles are possible?
 
-Your puzzle answer was 869.
+Your puzzle answer was `869`.
 
 ## Part Two
 
@@ -31,4 +31,4 @@ For example, given the following specification, numbers with the same hundreds d
 
 In your puzzle input, and instead reading by columns, how many of the listed triangles are possible?
 
-Your puzzle answer was 1544.
+Your puzzle answer was `1544`.

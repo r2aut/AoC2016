@@ -1,57 +1,66 @@
-""" Day 3: Squares With Three Sides """
+"""Day 3: Squares With Three Sides."""
+
+from collections.abc import Iterable
+from io import TextIOBase
+from pathlib import Path
+
+from rich.console import Console
 
 
-def count_valid_triangles_variant_1(file):
-    """ count_valid_triangles_variant_1 for the 1st phase """
+def is_a_valid_triangle(sides: Iterable) -> bool:
+    """Decide if the triple is a valid triangle."""
+    _sides = list(sides)
+    if len(_sides) == 3:  # noqa: PLR2004
+        _sides.sort()
+        if _sides[2] < _sides[0] + _sides[1]:
+            return True
+    return False
+
+
+def count_valid_triangles_variant_1(file: TextIOBase) -> int:
+    """Count_valid_triangles_variant_1 for the 1st phase."""
     counter = 0
     for line in file:
-        triangle_str = line.strip().split()
-        triangle = [int(x) for x in triangle_str]
-        triangle.sort()
-        if triangle[2] < triangle[1]+triangle[0]:
+        sides = [int(x) for x in line.strip().split()]
+        if is_a_valid_triangle(sides):
             counter += 1
     return counter
 
 
-def count_valid_triangles_variant_2(file):
-    """ count_valid_triangles_variant_2 for the 2nd phase """
+def count_valid_triangles_variant_2(file: TextIOBase) -> int:
+    """Count_valid_triangles_variant_2 for the 2nd phase."""
     counter = 0
-    flag = True
-    while flag:
-        tri = list()
-        for _ in range(3):  # prepare several triangle descriptions using columns
-            line = file.readline()
-            if not line:  # go out
-                flag = False
-                break
+    eof = False
+    while not eof:
+        triple_lines: list[list[int]] = []
+        for _ in range(3):
+            line = file.readline().strip()
             if line:
-                triangle_str = line.strip().split()
-                triangle = [int(x) for x in triangle_str]
-                if len(tri) == 0:  # first string in 3 range, create lists
-                    for no, item in enumerate(triangle):
-                        tri.append(list())
-                        tri[no].append(item)
-                else:
-                    for no, item in enumerate(triangle):
-                        tri[no].append(item)
-        if flag:  # estimate triangle descriptions
-            for item in tri:
-                if len(item) == 3:
-                    item.sort()
-                    if item[2] < item[1]+item[0]:
-                        counter += 1
+                triple_lines.append([int(x) for x in line.split()])
+            else:
+                eof = True
+                break  # break for circle
+        if triple_lines:
+            for i in range(3):
+                sides: list[int] = []
+                for j in range(3):
+                    sides.append(triple_lines[j][i])  # noqa: PERF401
+
+                if is_a_valid_triangle(sides):
+                    counter += 1
     return counter
 
 
-def main():
-    """ main function """
-    with open(r"puzzles/aoc2016day03_data.txt", encoding="utf-8") as file:
-        print(
-            f"It is possible {count_valid_triangles_variant_1(file)} triangles using variant 1.")
+def main():  # noqa: ANN201, D103
+    rc = Console()
 
-    with open(r"puzzles/aoc2016day03_data.txt", encoding="utf-8") as file:
-        print(
-            f"It is possible {count_valid_triangles_variant_2(file)} triangles using variant 2.")
+    with Path(r"puzzles/aoc2016day03_data.txt").open(encoding="utf-8") as file:
+        res_1 = count_valid_triangles_variant_1(file)
+        rc.print(f"[cyan](Part One)[/cyan] It is possible [green]{res_1}[/green] triangles.")
+
+    with Path(r"puzzles/aoc2016day03_data.txt").open(encoding="utf-8") as file:
+        res_2 = count_valid_triangles_variant_2(file)
+        rc.print(f"[cyan](Part Two)[/cyan] It is possible [green]{res_2}[/green] triangles.")
 
 
 if __name__ == "__main__":
