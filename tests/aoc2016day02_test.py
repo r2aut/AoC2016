@@ -1,4 +1,6 @@
-""" Day 2: Bathroom Security unit tests """
+"""Day 2: Bathroom Security unit tests."""
+
+# ruff: noqa: S101, ANN201
 
 import io
 
@@ -6,8 +8,7 @@ from src.aoc2016day02 import Position, get_digits
 
 
 def test_get_digits1():
-    """Get_gigits function unit test for variant 1"""
-
+    """Get_gigits function (var 1)."""
     test_keypad1 = (("1", "2", "3", "0"), ("4", "5", "6", "0"), ("7", "8", "9", "0"), ("0", "0", "0", "0"))
 
     test_str = "ULL\nRRDDD\nLURDL\nUUUUD"
@@ -18,8 +19,7 @@ def test_get_digits1():
 
 
 def test_get_digits2():
-    """Get_gigits function unit test for variant 2"""
-
+    """Get_gigits function (var 2)."""
     test_keypad2 = (
         ("0", "0", "1", "0", "0"),
         ("0", "2", "3", "4", "0"),
