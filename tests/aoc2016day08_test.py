@@ -1,36 +1,32 @@
-""" Day 8: Two-Factor Authentication unit tests """
+"""Day 8: Two-Factor Authentication unit tests."""
 
-# import sys
-# sys.path.append("src")
+# ruff: noqa: S101, ANN201, PLR2004
 
-import io
+from io import StringIO
 
-from src.aoc2016day08 import Screen
-from src.aoc2016day08 import ScreenProcessor
+from src.aoc2016day08 import Screen, ScreenProcessor
 
-
-def test_screen_processor():
-    """ screen_processor function unit test """
-
-    input_text='''rect 3x2
+TEST_INPUT = """rect 3x2
 rotate column x=1 by 1
 rotate row y=0 by 4
 rotate column x=1 by 1
-'''
+"""
 
-    expected_output_text = '''.#..#.#
+EXPECTED_OUTPUT = """.#..#.#
 #.#....
 .#.....
-'''
+"""
 
+
+def test_screen_processor():
+    """Test screen_processor."""
     width = 7
     hight = 3
 
-    with io.StringIO(input_text) as file:
+    with StringIO(TEST_INPUT) as file:
         screen = Screen(width, hight)
         sp = ScreenProcessor(screen, file)
-        while sp.process_command() :
-            pass
+        sp.process_all_commands()
 
-        assert str(screen) == expected_output_text
-        assert screen.lit_pixels() == 6
+        assert screen.count_lit_pixels() == 6
+        assert str(screen) == EXPECTED_OUTPUT

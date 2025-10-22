@@ -1,102 +1,116 @@
-""" Day 8: Two-Factor Authentication """
+"""Day 8: Two-Factor Authentication."""
 
-import io
+# ruff: noqa: D105, D107
+
+import re
+from io import TextIOBase
+from pathlib import Path
+
+from rich.console import Console
 
 
 class Screen:
-    """ class Screen """
-    __rows = list()
+    """Class Screen."""
 
-    def __init__(self, width, hight):
-        for _ in range(hight):
-            row = [False]*width
-            self.__rows.append(row)
+    def __init__(self, width: int, hight: int) -> None:
+        self.rows: list[list[bool]] = [[False for ch in range(width)] for row in range(hight)]
 
     def __str__(self) -> str:
-        strio = io.StringIO()
-        for row in self.__rows:
-            for col in row:
-                print("#" if col else ".", end='', sep='', file=strio)
-            print(file=strio)
-        return strio.getvalue()
+        return "\n".join(["".join(["#" if ch else "." for ch in row]) for row in self.rows]) + "\n"
 
-    def rect(self, width, hight):
-        """ rect method """
+    def rect(self, width: int, hight: int) -> None:
+        """Do rect comand."""
         for row in range(hight):
             for col in range(width):
-                self.__rows[row][col] = True
+                self.rows[row][col] = True
 
-    def rotate_row(self, row_num, shifts):
-        """ rotate_row method """
-        width = len(self.__rows[0])
-        new_row = [False] * width
-        for num, col in enumerate(self.__rows[row_num]):
-            if col:
-                new_pos = (num + shifts) % width
-                new_row[new_pos] = True
-        self.__rows[row_num] = new_row
+    def rotate_row(self, row_num: int, shifts: int) -> None:
+        """Do rotate_row command."""
+        width = len(self.rows[row_num])
 
-    def rotate_column(self, column_num, shifts):
-        """ rotate_column method """
-        hight = len(self.__rows)
-        new_column = [False] * hight
-        for row in range(len(self.__rows)):
-            if self.__rows[row][column_num]:
-                new_row = (row + shifts) % hight
-                new_column[new_row] = True
-        for row in range(len(self.__rows)):
-            self.__rows[row][column_num] = new_column[row]
+        # get number of the item which should be the first in new row
+        new_first_item = (width - shifts) % width
+        # prepare new clear row
+        new_row = []
+        # fill new roq with values in correct order
+        new_row.extend(self.rows[row_num][new_first_item:])
+        new_row.extend(self.rows[row_num][0:new_first_item])
+        # replace old row with new one
+        self.rows[row_num] = new_row
 
-    def lit_pixels(self):
-        """ lit_pixels method """
-        counter = 0
-        for row in self.__rows:
-            for col in row:
-                if col:
-                    counter += 1
-        return counter
+    def rotate_column(self, column_num: int, shifts: int) -> None:
+        """Do rotate_column command."""
+        hight = len(self.rows)
+
+        # get copy of processed column
+        column = [row[column_num] for row in self.rows]
+        # get number of the item which should be the first in new column
+        new_first_item = (hight - shifts) % hight
+        # prepare new clear column
+        new_column = []
+        # fill new column with values in corrrect order
+        new_column.extend(column[new_first_item:])
+        new_column.extend(column[:new_first_item])
+        # replace old column with new one
+        for i in range(hight):
+            self.rows[i][column_num] = new_column[i]
+
+    def count_lit_pixels(self) -> int:
+        """Count lit_pixels command."""
+        return sum(sum(1 if pixel else 0 for pixel in row) for row in self.rows)
 
 
 class ScreenProcessor:
-    """ class ScreenProcessor """
-    __screen = None
-    __file = None
+    """Class ScreenProcessor."""
 
-    def __init__(self, screen, file) -> None:
+    def __init__(self, screen: Screen, file: TextIOBase) -> None:
         self.__screen = screen
         self.__file = file
 
-    def process_command(self):
-        """ process_command method """
-        line = self.__file.readline()
+    def process_command(self) -> bool:
+        """Do process_command."""
+        line = self.__file.readline().strip()
         if len(line) == 0:
             return False
-        line_parts = line.split()
-        if line_parts[0] == 'rect':
-            args = line_parts[1].split('x')
-            self.__screen.rect(int(args[0]), int(args[1]))
-        elif line_parts[0] == "rotate" and line_parts[1] == "row":
-            args = line_parts[2].split('=')
-            self.__screen.rotate_row(int(args[1]), int(line_parts[4]))
-        elif line_parts[0] == "rotate" and line_parts[1] == "column":
-            args = line_parts[2].split('=')
-            self.__screen.rotate_column(int(args[1]), int(line_parts[4]))
+
+        if m := re.match(r"rect (\d*)x(\d*)", line):
+            a = int(m.group(1))
+            b = int(m.group(2))
+            self.__screen.rect(a, b)
+        elif m := re.match(r"rotate row y=(\d*) by (\d*)", line):
+            a = int(m.group(1))
+            b = int(m.group(2))
+            self.__screen.rotate_row(a, b)
+        elif m := re.match(r"rotate column x=(\d*) by (\d*)", line):
+            a = int(m.group(1))
+            b = int(m.group(2))
+            self.__screen.rotate_column(a, b)
+        else:
+            raise ValueError
         return True
 
+    def process_all_commands(self) -> None:
+        """Do process all commands."""
+        while self.process_command():
+            pass
 
-def main():
-    """ main function """
 
+def main():  # noqa: ANN201, D103
     width = 50
     hight = 6
 
-    with open("puzzles/aoc2016day08_data.txt", encoding="utf-8") as file:
+    with Path("puzzles/aoc2016day08_data.txt").open(encoding="utf-8") as file:
         screen = Screen(width, hight)
-        print(screen)
         sp = ScreenProcessor(screen, file)
-        while sp.process_command():
-            print(screen)
-        print(screen.lit_pixels(), "pixels should be lit")
+        sp.process_all_commands()
+
+        res_1 = screen.count_lit_pixels()
+        res_2 = str(screen)
+
+        rc = Console()
+        rc.print(f"[cyan](Part One)[/cyan] [green]{res_1}[/green] pixels should be lit")
+        rc.print("[cyan](Part Two)[/cyan] ---------------------------------------")
+        rc.print(f"[green]{res_2}[/green]")
 
 
 if __name__ == "__main__":
