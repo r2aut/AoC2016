@@ -1,21 +1,21 @@
-""" Day 1: No Time for a Taxicab unit tests """
+"""Day 1: No Time for a Taxicab unit tests."""
 
-from src.aoc2016day01 import next_position
-from src.aoc2016day01 import manhattan_distance
+# ruff: noqa: S101, ANN201, PLR2004
 
-
-def test_next_position():
-    """ Unit test for calculating next position function """
-    assert next_position([0, 0], []) == [0, 0]
-    assert next_position([0, 0], ["R2", "L3"]) == [2, 3]
-    assert next_position([0, 0], ["R5", "L5", "R5", "R3"]) == [10, 2]
-    assert next_position([0, 0], ["R8", "R4", "R4", "R8"], True) == [4, 0]
+from src.aoc2016day01 import Position, Runner
 
 
-def test_manhattan_distance():
-    """ Unit test for calculating Manheten distance function """
-    assert manhattan_distance([0, 0]) == 0
-    assert manhattan_distance([2, 3]) == 5
-    assert manhattan_distance([3, 2]) == 5
-    assert manhattan_distance([-3, 2]) == 5
-    assert manhattan_distance([-3, -2]) == 5
+def test_position():
+    """Test Position class."""
+    assert Position(0, 0).manhattan_distance() == 0
+    assert Position(2, 3).manhattan_distance() == 5
+    assert Position(-3, 2).manhattan_distance() == 5
+    assert Position(-2, -3).manhattan_distance() == 5
+
+
+def test_runner():
+    """Test Runner class."""
+    r1 = Runner()
+    for cmd in ["R8", "R4", "R4", "R8"]:
+        r1.execute(cmd)
+    assert r1.position == Position(4, 4)

@@ -1,95 +1,138 @@
-""" Day 1: No Time for a Taxicab """
+"""Day 1: No Time for a Taxicab."""
 
-import turtle
-from turtle import Turtle
+from collections.abc import Callable, Iterable
+from enum import Enum
+from io import TextIOBase
+from pathlib import Path
+from turtle import Turtle, done
+from typing import NamedTuple
+
+from rich.console import Console
 
 
-def next_position(init_position: list, commands: list, stop_at_intersection=False,
-                  tur=None, turtle_colour="black") -> list:
-    """ calculate next position ??? """
+class Position(NamedTuple):
+    """Position on the map."""
 
-    # x - (horizontal axis) = pos[0], y - (vertical axis) = pos[1], vertical axis forwarded up
-    pos = list(init_position)
-    direction = 0  # possible directions are "up"=0, "right"=1, "down"=2, "left"=3
-    locations = set()
+    x: int  # horizontal axis forwarded right
+    y: int  # vertical axis forwarded up
 
-    use_turtle = False
-    if tur is not None:
-        use_turtle = True
+    def manhattan_distance(self) -> int:
+        """Calculate the Manhattan distance between itself and zero point."""
+        return abs(self.x) + abs(self.y)
 
-    if use_turtle:
-        # tur = Turtle()
-        tur.pencolor(turtle_colour)
-        tur.setpos((0, 0))
-        tur.pendown()
-        tur.dot()
 
-    break_condition = False
-    for com in commands:
-        dir_letter = com[0]
-        steps = int(com[1:])
-        if dir_letter == 'R':
-            direction = (direction + 1) % 4
+class Direction(Enum):
+    """Direction in wich the runner looks (forward direction)."""
+
+    NORTH = 0
+    EAST = 1
+    SOUTH = 2
+    WEST = 3
+
+
+class Runner:
+    """Santa delivering gifts."""
+
+    def __init__(self, position: Position | None = None, /, log_func: Callable[[Position], None] | None = None) -> None:
+        """Create runner with start position and logger function."""
+        if position:
+            self.position: Position = Position(*position)
         else:
-            direction = (direction - 1) % 4
+            self.position = Position(0, 0)
+        self.direction: Direction = Direction.NORTH
+        self.log_func: Callable[[Position], None] | None = log_func
+        if self.log_func:
+            self.log_func(self.position)
 
-        for _ in range(steps):
-            if direction == 0:  # moves up
-                pos[1] += 1
-            elif direction == 1:  # moves right
-                pos[0] += 1
-            elif direction == 2:  # moves down
-                pos[1] -= 1
-            elif direction == 3:  # moves left
-                pos[0] -= 1
+    def move(self, blocks: int) -> None:
+        """Move the runner on number of blocks."""
+        for _ in range(blocks):
+            match self.direction:
+                case Direction.NORTH:
+                    self.position = Position(self.position.x, self.position.y + 1)
+                case Direction.EAST:
+                    self.position = Position(self.position.x + 1, self.position.y)
+                case Direction.SOUTH:
+                    self.position = Position(self.position.x, self.position.y - 1)
+                case Direction.WEST:
+                    self.position = Position(self.position.x - 1, self.position.y)
+            if self.log_func:
+                self.log_func(self.position)
 
-            if use_turtle:
-                tur.goto(pos)
+    def turn(self, ch: str) -> None:
+        """Turn the runner (change current forward direction)."""
+        match ch:
+            case "L":
+                self.direction = Direction((self.direction.value - 1) % 4)
+            case "R":
+                self.direction = Direction((self.direction.value + 1) % 4)
+            case _:
+                raise ValueError
 
-            if stop_at_intersection:
-                if tuple(pos) in locations:
-                    break_condition = True
-                    break
-                else:
-                    locations.add(tuple(pos))
-
-        if break_condition:
-            break
-
-    if use_turtle:
-        tur.dot()
-        tur.penup()
-
-    return pos
-
-
-def manhattan_distance(pos: list):
-    """ calculate Manhattan """
-    return abs(pos[0]) + abs(pos[1])
+    def execute(self, command: str) -> None:
+        """Execute the command."""
+        turn = command[0]
+        distance = int(command[1:])
+        self.turn(turn)
+        self.move(distance)
 
 
-def main():
-    """ main function """
+class RunLogger:
+    """Logger for runner movings."""
 
-    turt = None
-    turtle_answer = input("Use turtle? (Y/N)\n")
-    use_turtle = turtle_answer.strip().upper() == 'Y'
-    if use_turtle:
-        turt = Turtle()
-        turt.screen.setworldcoordinates(-50, -200, 200, 50)
+    def __init__(self) -> None:  # noqa: D107
+        self.trace: list[Position] = []  # for drawing
+        self.places: set[Position] = set()  # for quick search
+        self.intersections: list[Position] = []  # to get intersections
 
-    with open("puzzles/aoc2016day01_data.txt", encoding="utf-8") as file:
-        commands = file.readline().split(", ")
-    current_position = [0, 0]
+    def log(self, position: Position) -> None:
+        """Log the movings."""
+        self.trace.append(position)
+        if position in self.places:
+            self.intersections.append(position)
+        self.places.add(position)
 
-    md1 = manhattan_distance(next_position(current_position, commands, tur = turt))
-    print(f"{md1} blocks away is Easter Bunny HQ")
-    md2 = manhattan_distance(next_position(current_position, commands, True, tur=turt,
-                                           turtle_colour="red"))
-    print(f"{md2} blocks away is the first location visited twice")
 
-    if use_turtle:
-        turtle.done()
+def read_data(file: TextIOBase) -> list[str]:
+    """Get data from file."""
+    return file.readline().strip().split(", ")
+
+
+def show_trace(trace: Iterable[Position]) -> None:
+    """Show the trace as graphic turtle drawing."""
+    turt = Turtle()
+    turt.screen.setworldcoordinates(-50, -200, 200, 50)
+    turt.pencolor("black")
+    turt.setpos((0, 0))
+    turt.pendown()
+    turt.dot()
+    for point in trace:
+        turt.goto(*point)
+    turt.dot()
+    turt.penup()
+    done()
+
+
+def main():  # noqa : ANN201, D103
+    with Path(r"puzzles/aoc2016day01_data.txt").open(encoding="utf-8") as file:
+        data = read_data(file)
+        logger = RunLogger()
+        runner = Runner(log_func=logger.log)
+        for cmd in data:
+            runner.execute(cmd)
+        res_1 = runner.position.manhattan_distance()
+        res_2 = logger.intersections[0].manhattan_distance()
+
+        rc = Console()
+
+        rc.print(f"[cyan](Part One)[/cyan] Easter Bunny HQ is [green]{res_1}[/green] blocks away.")
+        if res_2:
+            rc.print(f"[cyan](Part Two)[/cyan] The first location visited twice is [green]{res_2}[/green] blocks away.")
+        else:
+            rc.print("[cyan](Part Two)[/cyan] It was no intersections in the way.")
+        if input("Show demonstration (y/n)?").lower() == "y":
+            show_trace(logger.trace)
+
 
 if __name__ == "__main__":
     main()
