@@ -1,33 +1,33 @@
-""" Day 7: Internet Protocol Version 7 unit tests """
+"""Day 7: Internet Protocol Version 7."""
 
-from src.aoc2016day07 import scan_line_for_tls
-from src.aoc2016day07 import scan_line_for_ssl
+# ruff: noqa: S101, ANN201, PLR2004
 
-test_str_TLS = list()
-test_str_TLS.append("abba[mnop]qrst")
-test_str_TLS.append("abcd[bddb]xyyx")
-test_str_TLS.append("aaaa[qwer]tyui")
-test_str_TLS.append("ioxxoj[asdfgh]zxcvbn")
+from io import StringIO
+
+from src.aoc2016day07 import part_1, part_2, read_addresses
+
+TEST_1 = """
+abba[mnop]qrst
+abcd[bddb]xyyx
+aaaa[qwer]tyui
+ioxxoj[asdfgh]zxcvbn
+"""
 
 
-def test_scan_line_for_tls():
-    """ scan_line_for_tls unit test """
-    counter = 0
-    for line in test_str_TLS:
-        if scan_line_for_tls(line):
-            counter += 1
-    assert counter == 2
+def test_part_1():
+    """Test scan_line_for_tls."""
+    data = read_addresses(StringIO(TEST_1))
+    assert part_1(data) == 2
 
-test_str_SSL = list()
-test_str_SSL = """aba[bab]xyz
+
+TEST_2 = """aba[bab]xyz
 xyx[xyx]xyx
 aaa[kek]eke
-zazbz[bzb]cdb""".split("\n")
+zazbz[bzb]cdb
+"""
 
-def test_scan_line_for_ssl():
-    """ scan_line_for_ssl unit test """
-    counter = 0
-    for line in test_str_SSL:
-        if scan_line_for_ssl(line):
-            counter += 1
-    assert counter == 3
+
+def test_part_2():
+    """Test scan_line_for_ssl."""
+    data = read_addresses(StringIO(TEST_2))
+    assert part_2(data) == 3
