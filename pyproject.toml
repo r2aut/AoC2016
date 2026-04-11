@@ -3,21 +3,48 @@ name = "aoc2016"
 version = "0.1.0"
 description = "Advent of Code 2016"
 readme = "README.md"
-requires-python = ">=3.13"
-dependencies = [
-    "pythonturtle>=0.3.2",
-    "rich>=14.2.0",
-]
+requires-python = ">=3.14"
+dependencies = ["pythonturtle>=0.3.2", "rich>=14.2.0"]
 
 [dependency-groups]
 dev = [
     "pytest>=8.4.2",
+    "ruff>=0.15.10",
+    "ty>=0.0.29",
 ]
+
+# Здесь регистрируются исполняемые файлы
+[project.scripts]
+# команда = "путь.к.пакету.модуль:функция"
+day01 = "aoc2016.day01:main"
+day02 = "aoc2016.day02:main"
+day03 = "aoc2016.day03:main"
+day04 = "aoc2016.day04:main"
+day05 = "aoc2016.day05:main"
+day06 = "aoc2016.day06:main"
+day07 = "aoc2016.day07:main"
+day08 = "aoc2016.day08:main"
+day09 = "aoc2016.day09:main"
+day10 = "aoc2016.day10:main"
+# day12 = "aoc2016.day12:main"
+# day13 = "aoc2016.day13:main"
+# day14 = "aoc2016.day14:main"
+# day15 = "aoc2016.day15:main"
+# day16 = "aoc2016.day16:main"
+# day17 = "aoc2016.day17:main"
+# day18 = "aoc2016.day18:main"
+# day20 = "aoc2016.day20:main"
+# day21 = "aoc2016.day21:main"
+
+[tool.uv]
+# Важно! uv работает с пакетом, а не с набором файлов
+package = true
+
 
 [tool.ruff]
 
 # Same as Black.
-line-length = 120
+line-length = 160
 indent-width = 4
 
 [tool.ruff.lint]
@@ -26,7 +53,7 @@ indent-width = 4
 # McCabe complexity (`C901`) by default.
 # select = ["E4", "E7", "E9", "F"]
 select = ["ALL"]
-ignore = ["ERA001"]
+ignore = ["D101", "D102", "D103", "D105", "D107", "D203", "D213"]
 
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]
@@ -61,4 +88,3 @@ docstring-code-format = false
 # This only has an effect when the `docstring-code-format` setting is
 # enabled.
 docstring-code-line-length = "dynamic"
-
