@@ -15,6 +15,7 @@ Tasks of the Advent of Code 2016:
 - [Day 8: Two-Factor Authentication](docs/day08.md)
 - [Day 9: Explosives in Cyberspace](docs/day09.md)
 - [Day 10: Balance Bots](docs/day10.md)
+- [Day 11: Radioisotope Thermoelectric Generators](docs/day11.md)
 - [Day 12: Leonardo's Monorail](docs/day12.md)
 - [Day 13: A Maze of Twisty Little Cubicles](docs/day13.md)
 - [Day 14: One-Time Pad](docs/day14.md)
