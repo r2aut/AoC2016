@@ -25,3 +25,4 @@ Tasks of the Advent of Code 2016:
 - [Day 18: Like a Rogue](docs/day18.md)
 - [Day 20: Firewall Rules](docs/day20.md)
 - [Day 21: Scrambled Letters and Hash](docs/day21.md)
+- [Day 22: Grid Computing](docs/day22.md)
