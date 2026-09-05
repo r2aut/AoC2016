@@ -32,6 +32,9 @@ day17 = "aoc2016.day17:main"
 day18 = "aoc2016.day18:main"
 day20 = "aoc2016.day20:main"
 day21 = "aoc2016.day21:main"
+day22 = "aoc2016.day22:main"
+day23 = "aoc2016.day23:main"
+day24 = "aoc2016.day24:main"
 
 [tool.uv]
 # Важно! uv работает с пакетом, а не с набором файлов
