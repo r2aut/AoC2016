@@ -23,6 +23,7 @@ Tasks of the Advent of Code 2016:
 - [Day 16: Dragon Checksum](docs/day16.md)
 - [Day 17: Two Steps Forward](docs/day17.md)
 - [Day 18: Like a Rogue](docs/day18.md)
+- [Day 19: An Elephant Named Joseph](docs/day19.md)
 - [Day 20: Firewall Rules](docs/day20.md)
 - [Day 21: Scrambled Letters and Hash](docs/day21.md)
 - [Day 22: Grid Computing](docs/day22.md)

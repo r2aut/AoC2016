@@ -1,23 +1,31 @@
-""" Day 19: An Elephant Named Joseph """
+"""Day 19: An Elephant Named Joseph."""
 
 import array
+from typing import TYPE_CHECKING, Any
+
+from rich.console import Console
 from rich.progress import Progress
+
+from aoc2016.common import P1, P2, stopwatch
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
 
 
 class Circle:
-    def __init__(self, size):
+    def __init__(self, size: int) -> None:
         self.array = array.array("L", (n + 1 for n in range(size)))
 
-    def __setitem__(self, ind, value):
+    def __setitem__(self, ind: int, value: int) -> None:
         self.array[ind] = value
 
-    def __getitem__(self, ind):
+    def __getitem__(self, ind: int) -> int:
         return self.array[ind]
 
-    def __delitem__(self, ind):
+    def __delitem__(self, ind: int) -> None:
         del self.array[ind]
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator:
         cur_item = 0
         while True:
             value = self.array[cur_item]
@@ -29,13 +37,13 @@ class Circle:
             else:
                 return
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.array)
 
 
-def calc_part_one(size, **kwargs):
+def calc_part_one(size: int, **kwargs: Any) -> int:  # noqa: ANN401
 
-    progress: Progress | None = kwargs.get("progress", None)
+    progress: Progress | None = kwargs.get("progress")
     if progress is not None:
         progress_task = progress.add_task("Calculate...", total=size - 1)
 
@@ -51,14 +59,14 @@ def calc_part_one(size, **kwargs):
             last_item = first
             if progress is not None:
                 cnt += 1
-                progress.update(progress_task, completed=cnt)
+                progress.update(progress_task, completed=cnt)  # pyright: ignore[reportPossiblyUnboundVariable]
     except StopIteration:
         return last_item
 
 
-def calc_part_two(size, **kwargs):
+def calc_part_two(size: int, **kwargs: Any) -> int:  # noqa: ANN401
 
-    progress: Progress | None = kwargs.get("progress", None)
+    progress: Progress | None = kwargs.get("progress")
     if progress is not None:
         progress_task = progress.add_task("Calculate...", total=size - 1)
 
@@ -69,46 +77,27 @@ def calc_part_two(size, **kwargs):
     try:
         while True:
             ind, first = next(it)
-            # print(first)
             cross_ind = (len(circle) // 2 + ind) % len(circle)
             del circle[cross_ind]
             last_item = first
             if progress is not None:
                 cnt += 1
-                progress.update(progress_task, completed=cnt)
+                progress.update(progress_task, completed=cnt)  # pyright: ignore[reportPossiblyUnboundVariable]
     except StopIteration:
         return last_item
 
 
-# def calc_part_two(size):
+@stopwatch
+def main() -> None:
 
-#     circle = Circle(size)
-#     last_item = 0
-#     it = iter(circle)
-#     try:
-#         while True:
-#             first = next(it)
-
-#             last_item = first
-#     except StopIteration:
-#         return last_item + 1  # Elf numeration is based on 1
-
-
-def main():
-
-    circle_size = 5
     circle_size = 3014387
 
+    rc = Console()
     with Progress() as progress:
-        # res1 = calc_part_one(circle_size, progress=progress)
+        res1 = calc_part_one(circle_size, progress=progress)
         res2 = calc_part_two(circle_size, progress=progress)
-    # print(f"Answewr for part one is {res1}")
-    print(f"Answewr for part two is {res2}")
-
-    # circle = Circle(circle_size)
-    # it = iter(circle)
-    # for _ in range(15):
-    #     print(next(it))
+    rc.print(f"{P1} =  [green]{res1}[/green]")
+    rc.print(f"{P2} =  [green]{res2}[/green]")
 
 
 if __name__ == "__main__":
