@@ -141,6 +141,30 @@ class Computer:
                     else:
                         self.pos_ += 1
                     return
+            case "tgl":
+                if command.op1 is not None:
+                    shift = self.get_op_value(command.op1)
+                    ptr = self.pos_ + shift
+                    if ptr < len(self.prog_):
+                        old_cmd = self.prog_[ptr]
+                        match old_cmd.cmd:
+                            case "tgl":  # 1 arg
+                                if old_cmd.op1 is not None and old_cmd.op1.is_reg_:
+                                    old_cmd.cmd = "inc"
+                            case "cpy":  # 2 arg
+                                if old_cmd.op2 is not None and old_cmd.op2.is_reg_:
+                                    old_cmd.cmd = "jnz"
+                            case "inc":  # 1 arg
+                                if old_cmd.op1 is not None and old_cmd.op1.is_reg_:
+                                    old_cmd.cmd = "dec"
+                            case "dec":  # 1 arg
+                                if old_cmd.op1 is not None and old_cmd.op1.is_reg_:
+                                    old_cmd.cmd = "inc"
+                            case "jnz":  # 2 arg
+                                if old_cmd.op2 is not None and old_cmd.op2.is_reg_:
+                                    old_cmd.cmd = "cpy"
+                    self.pos_ += 1
+                    return
         mess = f"Wrong command {command}"
         raise InvalidCommandError(mess)
 

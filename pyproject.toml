@@ -4,7 +4,11 @@ version = "0.1.0"
 description = "Advent of Code 2016"
 readme = "README.md"
 requires-python = ">=3.14"
-dependencies = ["pythonturtle>=0.3.2", "regex>=2026.9.3", "rich>=14.2.0"]
+dependencies = [
+    "pythonturtle>=0.3.2",
+    "regex>=2026.9.3",
+    "rich>=14.2.0",
+]
 
 [dependency-groups]
 dev = ["pytest>=8.4.2", "ruff>=0.15.10", "ty>=0.0.29"]
