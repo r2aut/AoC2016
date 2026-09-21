@@ -2,6 +2,7 @@
 
 import functools
 import time
+from collections import deque
 from typing import TYPE_CHECKING
 
 from rich.console import Console
@@ -68,6 +69,7 @@ class Computer:
         self.b_: int = 0
         self.c_: int = 0
         self.d_: int = 0
+        self.out_queue: deque = deque()
 
     def __str__(self) -> str:
         return f"{{a = {self.a_}, b = {self.b_}, c = {self.c_}, d = {self.d_}, pos = {self.pos_}}}"
@@ -107,7 +109,13 @@ class Computer:
         mess = f"Invalid name of register {name}"
         raise ValueError(mess)
 
-    def execute_command(self) -> None:  # noqa: C901
+    def get_output(self, number: int = 1) -> list | None:
+        if len(self.out_queue):
+            return [self.out_queue.popleft() for _ in range(min(number, len(self.out_queue)))]
+        else:
+            return None
+
+    def execute_command(self) -> None:  # noqa: C901, PLR0912, PLR0915
         """Execute one command under the position pos_."""
         if self.pos_ >= len(self.prog_):
             mess = "Program halted"
@@ -165,6 +173,12 @@ class Computer:
                                     old_cmd.cmd = "cpy"
                     self.pos_ += 1
                     return
+            case "out":
+                if command.op1 is not None:
+                    value = self.get_op_value(command.op1)
+                    self.out_queue.append(value)
+                    self.pos_ += 1
+                    return
         mess = f"Wrong command {command}"
         raise InvalidCommandError(mess)
 
@@ -172,3 +186,10 @@ class Computer:
         """Execute the whole program."""
         while 0 <= self.pos_ < len(self.prog_):
             self.execute_command()
+
+    def execute_program_qsize(self, qsize: int = 10) -> None:
+        """Execute the whole program limiting with qsize."""
+        while 0 <= self.pos_ < len(self.prog_):
+            self.execute_command()
+            if len(self.out_queue) >= qsize:
+                break
