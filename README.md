@@ -29,3 +29,6 @@ Tasks of the Advent of Code 2016:
 - [Day 22: Grid Computing](docs/day22.md)
 - [Day 23: Safe Cracking](docs/day23.md)
 - [Day 24: Air Duct Spelunking](docs/day24.md)
+- [Day 25: Clock Signal](docs/day25.md)
+
+That's all, folks!
